@@ -36,11 +36,9 @@ try:
     titulo_o = df.iloc[91, 2]
 
     # --- INTERFAZ ---
-    ruta_logo = os.path.join(os.path.dirname(__file__), "logo_aleph.png") 
-
-    if os.path.exists(ruta_logo):
-        st.image(ruta_logo, width=220)
-    else:
+if os.path.exists(ruta_logo):
+    st.image(ruta_logo, width=220)
+else:
     # Si el logo falla, ponemos el nombre con fuerza
     st.markdown(f"# **ALEPH NETWORKS, C.A.**") 
     st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
