@@ -8,7 +8,7 @@ import os
 ruta_logo = os.path.join(os.path.dirname(__file__), "logo.png") 
 
 if os.path.exists(ruta_logo):
-    st.image(ruta_logo, width=220)
+    st.image(ruta_logo, width=150)
 else:
     # Si el nombre es distinto (ejemplo: logo.jpg), ajusta la línea de arriba
     st.error(f"⚠️ No encontré el archivo '{ruta_logo}' en el repositorio.")
@@ -36,8 +36,14 @@ try:
     titulo_o = df.iloc[91, 2]
 
     # --- INTERFAZ ---
-    # Logo (Puedes poner tu link RAW de GitHub aquí)
-    st.image("https://raw.githubusercontent.com/Juancho/dsr_ldk/main/ALEPH/assets/logo_aleph.png", width=150)
+    ruta_logo = os.path.join(os.path.dirname(__file__), "logo_aleph.png") 
+
+    if os.path.exists(ruta_logo):
+        st.image(ruta_logo, width=220)
+    else:
+    # Si el logo falla, ponemos el nombre con fuerza
+    st.markdown(f"# **ALEPH NETWORKS, C.A.**") 
+    st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
 
     # EL RELOJITO
     fig = go.Figure(go.Indicator(
