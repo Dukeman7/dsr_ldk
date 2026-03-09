@@ -1,7 +1,18 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import os
 
+# --- LÓGICA DE LOGO LOCAL ---
+# Buscamos el archivo en la misma carpeta que el script
+ruta_logo = os.path.join(os.path.dirname(__file__), "logo_aleph.png") 
+
+if os.path.exists(ruta_logo):
+    st.image(ruta_logo, width=220)
+else:
+    # Si el nombre es distinto (ejemplo: logo.jpg), ajusta la línea de arriba
+    st.error(f"⚠️ No encontré el archivo '{ruta_logo}' en el repositorio.")
+    st.info("Asegúrate de que el nombre del archivo coincida exactamente (mayúsculas/minúsculas).")
 # Configuración para la pantalla táctil de la Yoga
 st.set_page_config(page_title="DSR_LDK - ALEPH", layout="wide")
 
