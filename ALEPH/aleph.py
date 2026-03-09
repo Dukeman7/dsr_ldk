@@ -2,11 +2,11 @@ import streamlit as st
 import plotly.graph_objects as go
 
 # Configuración de Marca
-st.image("URL_LOGO_EMPRESA", width=150)
+st.image("https://raw.githubusercontent.com/Juancho/dsr_ldk/main/ALEPH/assets/logo_aleph.png", width=150)
 st.title("Sistema ALEPH: Control de Obligaciones")
 
 # Simulación de Datos (esto vendrá de tu Google Sheet)
-cumplimiento_actual = 70.0 # Valor validado por ti
+cumplimiento_actual = 46.5 # Valor validado por ti
 
 # 1. El Relojito (Plotly Gauge)
 fig = go.Figure(go.Indicator(
