@@ -26,12 +26,18 @@ try:
     titulo_p = df.iloc[85, 2]
     titulo_o = df.iloc[91, 2]
 
-    # --- INTERFAZ ---
+    # --- INTERFAZ (Logo o Nombre) ---
+    # Intentamos primero con el logo local
     if os.path.exists(ruta_logo):
         st.image(ruta_logo, width=220)
+        # Opcional: Puedes dejar el nombre también debajo del logo
+        st.markdown(f"### **ALEPH NETWORKS, C.A.**")
     else:
-        st.markdown(f"# **ALEPH NETWORKS, C.A.**") 
-        st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
+        # Si el archivo no existe, el nombre sale en grande (Título #)
+        st.markdown(f"# **ALEPH NETWORKS, C.A.**")
+    
+    st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
+    st.divider() # Una línea para separar la cabecera del reloj
 
     # EL RELOJITO
     fig = go.Figure(go.Indicator(
