@@ -4,12 +4,9 @@ from streamlit_gsheets import GSheetsConnection
 # 1. Conexión al Libro (Asegúrate de configurar secrets.toml con tu URL)
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# 2. Leemos la pestaña ALEPH (Rango específico para optimizar)
-# Leemos las primeras filas para el Logo y el Porcentaje
-df_info = conn.read(worksheet="ALEPH", usecols=[0, 1, 2, 3], nrows=5)
-
-url_logo = df_info.iloc[0, 1]  # Celda A2 (Fila 0, Columna 1 en Python)
-porcentaje = float(df_info.iloc[2, 3]) # Celda D3 (Fila 2, Columna 3)
+# 1. Intenta forzar la lectura del secreto así:
+url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+df_info = conn.read(spreadsheet=url, worksheet="ALEPH", usecols=[0, 1, 2, 3], nrows=5)
 
 # 3. Leemos las Prioridades (Ajusta los índices según tu Excel)
 # Asumiendo que las prioridades están en una sección fija abajo
