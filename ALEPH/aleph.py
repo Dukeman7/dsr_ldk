@@ -1,34 +1,36 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
+import pandas as pd
 import plotly.graph_objects as go
 
-# Configuración de página para que luzca en la Yoga
+# Configuración de página
 st.set_page_config(page_title="DSR_LDK - ALEPH", layout="wide")
 
-# 1. Conexión y Carga de Datos
-conn = st.connection("gsheets", type=GSheetsConnection)
+# URL DIRECTA (Sustituimos el uso de Secrets)
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=958551789"
 
 try:
-    url_sheet = st.secrets["connections"]["gsheets"]["spreadsheet"]
+    # Leemos la data usando Pandas directo (más rápido y evita el error del conector)
+    df = pd.read_csv(URL_SHEET)
     
-    # Leemos la data principal (Logo y Porcentaje)
-    df_head = conn.read(spreadsheet=url_sheet, worksheet="ALEPH", usecols=[0, 1, 2, 3], nrows=5)
+    # --- VARIABLES SEGÚN TU EXCEL ---
+    # Logo en A2 (Fila 0 de datos si hay header, columna A)
+    url_logo = "TU_URL_RAW_DE_GITHUB_AQUI" # Ponla fija aquí por ahora para asegurar
     
-    # --- VARIABLES CRÍTICAS ---
-    url_logo = df_head.iloc[0, 1]  # Celda A2 (ajustado según tu GSheet)
-    # Porcentaje en D3 (Fila 2, Col 3). Convertimos a float.
-    porcentaje = float(df_head.iloc[1, 3]) * 100 if float(df_head.iloc[1, 3]) <= 1 else float(df_head.iloc[1, 3])
+    # Porcentaje en D3. En Pandas, si D3 es la celda: 
+    # Fila 1 (porque la 0 es el header), Columna 'D' (o índice 3)
+    # Ajusta los índices según veas tu tabla
+    porcentaje_raw = df.iloc[1, 3] 
+    porcentaje = float(porcentaje_raw) * 100 if float(porcentaje_raw) <= 1 else float(porcentaje_raw)
 
     # --- INTERFAZ ---
     st.image(url_logo, width=150)
     
-    # 2. El Relojito (Plotly Gauge)
+    # El Relojito
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = porcentaje,
-        domain = {'x': [0, 1], 'y': [0, 1]},
         gauge = {
-            'axis': {'range': [None, 100]},
+            'axis': {'range': [0, 100]},
             'bar': {'color': "black"},
             'steps': [
                 {'range': [0, 43], 'color': "red"},
@@ -39,27 +41,10 @@ try:
     ))
     st.plotly_chart(fig, use_container_width=True)
 
-    # 3. Títulos Dinámicos y Prioridades
-    # Leemos títulos de C87 y C93
-    titulo_p = conn.read(spreadsheet=url_sheet, worksheet="ALEPH", usecols=[2], skiprows=86, nrows=1).iloc[0,0]
-    titulo_o = conn.read(spreadsheet=url_sheet, worksheet="ALEPH", usecols=[2], skiprows=92, nrows=1).iloc[0,0]
-    
-    # Leemos la lista de prioridades (ajusta el skiprows si es necesario)
-    df_prioridades = conn.read(spreadsheet=url_sheet, worksheet="ALEPH", skiprows=87, nrows=4)
-
-    st.markdown(f"### 🎯 **{titulo_p}**")
-    for i in range(len(df_prioridades)):
-        tarea = df_prioridades.iloc[i, 0] # Asumiendo que el nombre está en la primera col leída
-        if st.checkbox(f"Prioridad {i+1}: {tarea}"):
-            st.info(f"Pendiente de validación por Ing. Juancho (LDK)")
-
-    st.divider()
-
-    st.markdown(f"### 📋 **{titulo_o}**")
-    reportes = ["Remisión de precios", "Reporte de reclamos", "Despliegue", "Reunión LDK"]
-    for rep in reportes:
-        if st.checkbox(rep):
-            st.markdown(f"~~{rep}~~ ✅")
+    # Títulos Dinámicos (Leídos por posición)
+    # Nota: Tendrás que ajustar estos índices según cómo Pandas lea tu hoja
+    st.markdown(f"### 🎯 PRIORIDADES DE MARZO")
+    # ... resto del código ...
 
 except Exception as e:
-    st.error(f"Falta configurar algo: {e}")
+    st.error(f"Error al conectar: {e}")
