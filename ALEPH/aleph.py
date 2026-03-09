@@ -5,7 +5,7 @@ import os
 
 # --- LÓGICA DE LOGO LOCAL ---
 # Buscamos el archivo en la misma carpeta que el script
-ruta_logo = os.path.join(os.path.dirname(__file__), "logo_aleph.png") 
+ruta_logo = os.path.join(os.path.dirname(__file__), "logo.png") 
 
 if os.path.exists(ruta_logo):
     st.image(ruta_logo, width=220)
