@@ -29,7 +29,7 @@ try:
     # --- INTERFAZ (Logo o Nombre) ---
     # Intentamos primero con el logo local
     if os.path.exists(ruta_logo):
-        st.image(ruta_logo, width=220)
+        st.image(ruta_logo, width=90)
         # Opcional: Puedes dejar el nombre también debajo del logo
         st.markdown(f"### **ALEPH NETWORKS, C.A.**")
     else:
