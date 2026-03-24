@@ -8,7 +8,7 @@ st.set_page_config(page_title="DSR_LDK - MAXI CABLE, C.A.", layout="wide")
 ruta_logo = os.path.join(os.path.dirname(__file__), "logo.png") 
 
 # --- ¡PONGA EL GID DE MAXI CABLE AQUÍ! ---
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=PONGA_AQUI_EL_GID"
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=1984654544"
 
 try:
     df = pd.read_csv(URL_SHEET)
