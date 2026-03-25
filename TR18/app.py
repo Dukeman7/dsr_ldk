@@ -9,7 +9,7 @@ st.set_page_config(page_title="DSR_LDK - TU RED 18, C.A.", layout="wide")
 ruta_logo = None
 directorio_actual = os.path.dirname(__file__)
 for archivo in os.listdir(directorio_actual):
-    if archivo.lower() in ['logo.png', 'logo.jpg', 'logo.jpeg']:
+    if archivo.lower() in ['logor.png', 'logor.jpg', 'logor.jpeg']:
         ruta_logo = os.path.join(directorio_actual, archivo)
         break
 
