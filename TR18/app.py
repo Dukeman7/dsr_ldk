@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import os
+import datetime
 
 st.set_page_config(page_title="DSR_LDK - TU RED 18, C.A.", layout="wide")
 
@@ -58,8 +59,6 @@ try:
 
     st.markdown("---")
     st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual (29.1%) expone a la operadora a sanciones severas o revocatoria por parte de CONATEL. La gestión se encuentra paralizada por falta de entrega de recaudos.")
-
-import datetime
 
     # --- RELOJ INTERNO PARA EL MES DINÁMICO EN ESPAÑOL ---
     meses_esp = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
