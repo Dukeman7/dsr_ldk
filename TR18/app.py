@@ -79,7 +79,7 @@ try:
         if f_codigo_p < len(df):
             st.markdown(f"## 🎯 **Prioridades del Mes ({mes_actual})**")
             
-            for i in range(25): 
+            for i in range(20): 
                 fila = f_codigo_p + 1 + i
                 if fila < len(df):
                     marcador = df.iloc[fila, COL_MARCADOR]
