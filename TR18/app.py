@@ -59,46 +59,71 @@ try:
     st.markdown("---")
     st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual (29.1%) expone a la operadora a sanciones severas o revocatoria por parte de CONATEL. La gestión se encuentra paralizada por falta de entrega de recaudos.")
 
-# ... (arriba de esto queda su relojito intacto) ...
+import datetime
+
+    # --- RELOJ INTERNO PARA EL MES DINÁMICO EN ESPAÑOL ---
+    meses_esp = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    mes_actual = meses_esp[datetime.date.today().month - 1]
 
     st.markdown("---")
     st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual expone a la operadora a sanciones severas. La gestión se encuentra paralizada por falta de entrega de recaudos.")
 
+    # Definición de Columnas en Python (A=0, B=1, C=2)
+    COL_MARCADOR = 0 
+    COL_NUMERO = 1   
+    COL_TEXTO = 2    
+
     # --- 1. LAS 20 PRIORIDADES ---
-    # Asumiendo que el título está en la Fila 87, Columna C (índice 85, 2) como en Aleph
-    f_codigo_p = 85 
-    col = 2 
+    f_codigo_p = 85 # Fila 87 de Excel
 
     try:
         if f_codigo_p < len(df):
-            titulo_p = df.iloc[f_codigo_p, col]
-            st.markdown(f"## 🎯 **{titulo_p}** (Gestión Detenida)")
+            st.markdown(f"## 🎯 **Prioridades del Mes ({mes_actual})**")
             
-            # Aquí está la magia: escanea hasta 25 celdas hacia abajo buscando sus 20 tareas
             for i in range(25): 
-                if (f_codigo_p + 1 + i) < len(df):
-                    tarea = df.iloc[f_codigo_p + 1 + i, col] 
+                fila = f_codigo_p + 1 + i
+                if fila < len(df):
+                    marcador = df.iloc[fila, COL_MARCADOR]
+                    numero = df.iloc[fila, COL_NUMERO]
+                    tarea = df.iloc[fila, COL_TEXTO] 
+                    
                     if pd.notna(tarea) and str(tarea).strip() != "":
-                        st.error(f"❌ PENDIENTE POR EL CLIENTE: {tarea}") 
+                        # Limpiar el número (por si Pandas le pone un .0)
+                        num_str = f"{str(numero).replace('.0', '')}. " if pd.notna(numero) and str(numero).strip() != "" else ""
+                        
+                        # Si hay ALGO en la Columna A (asterisco, X, etc), se marca cumplido
+                        if pd.notna(marcador) and str(marcador).strip() != "":
+                            st.success(f"✅ COMPLETADO: ~~{num_str}{tarea}~~")
+                        else:
+                            st.error(f"❌ PENDIENTE POR EL CLIENTE: {num_str}{tarea}") 
     except Exception:
         pass
 
     st.divider()
 
     # --- 2. LAS 4 OBLIGACIONES PERIÓDICAS ---
-    # ¡ATENCIÓN COMANDANTE! Ponga aquí el número de fila real donde quedó este título en su Excel
-    FILA_PERIODICAS = 110 # <--- ¡CAMBIE ESTE 110 POR LA FILA CORRECTA!
+    FILA_PERIODICAS = 110 # <--- ¡RECUERDE CAMBIAR ESTO POR LA FILA REAL EN SU EXCEL!
     f_codigo_o = FILA_PERIODICAS - 2
 
     try:
         if f_codigo_o < len(df):
-            titulo_o = df.iloc[f_codigo_o, col]
-            st.markdown(f"## 📋 **{titulo_o}**")
+            st.markdown(f"## 📋 **Obligaciones Periódicas Asesor ({mes_actual})**")
+            
             for j in range(4):
-                if (f_codigo_o + 1 + j) < len(df):
-                    reporte = df.iloc[f_codigo_o + 1 + j, col]
+                fila_o = f_codigo_o + 1 + j
+                if fila_o < len(df):
+                    marcador_o = df.iloc[fila_o, COL_MARCADOR]
+                    numero_o = df.iloc[fila_o, COL_NUMERO]
+                    reporte = df.iloc[fila_o, COL_TEXTO]
+                    
                     if pd.notna(reporte) and str(reporte).strip() != "":
-                        st.error(f"❌ REPORTE MENSUAL FALTANTE: {reporte}")
+                        num_str_o = f"{str(numero_o).replace('.0', '')}. " if pd.notna(numero_o) and str(numero_o).strip() != "" else ""
+                        
+                        # Las periódicas casi siempre estarán cumplidas por usted
+                        if pd.notna(marcador_o) and str(marcador_o).strip() != "":
+                            st.success(f"✅ GESTIÓN ASESOR CUMPLIDA: ~~{num_str_o}{reporte}~~")
+                        else:
+                            st.error(f"❌ REPORTE MENSUAL FALTANTE: {num_str_o}{reporte}")
     except Exception:
         pass
 
