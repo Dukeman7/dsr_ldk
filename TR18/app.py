@@ -59,22 +59,48 @@ try:
     st.markdown("---")
     st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual (29.1%) expone a la operadora a sanciones severas o revocatoria por parte de CONATEL. La gestión se encuentra paralizada por falta de entrega de recaudos.")
 
-    # Tareas Pendientes (Buscando desde la fila 87 como en Aleph, ajuste si es necesario)
-    FILA_EXCEL_TITULO = 87 
-    f_codigo = FILA_EXCEL_TITULO - 2 
-    col_B = 1 
+# ... (arriba de esto queda su relojito intacto) ...
+
+    st.markdown("---")
+    st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual expone a la operadora a sanciones severas. La gestión se encuentra paralizada por falta de entrega de recaudos.")
+
+    # --- 1. LAS 20 PRIORIDADES ---
+    # Asumiendo que el título está en la Fila 87, Columna C (índice 85, 2) como en Aleph
+    f_codigo_p = 85 
+    col = 2 
 
     try:
-        titulo_p = df.iloc[f_codigo, col_B]
-        if pd.notna(titulo_p):
+        if f_codigo_p < len(df):
+            titulo_p = df.iloc[f_codigo_p, col]
             st.markdown(f"## 🎯 **{titulo_p}** (Gestión Detenida)")
-            for i in range(4):
-                tarea = df.iloc[f_codigo + 1 + i, col_B] 
-                if pd.notna(tarea) and str(tarea).strip() != "":
-                    # Aquí es donde duele visualmente
-                    st.error(f"❌ PENDIENTE POR EL CLIENTE: {tarea}") 
+            
+            # Aquí está la magia: escanea hasta 25 celdas hacia abajo buscando sus 20 tareas
+            for i in range(25): 
+                if (f_codigo_p + 1 + i) < len(df):
+                    tarea = df.iloc[f_codigo_p + 1 + i, col] 
+                    if pd.notna(tarea) and str(tarea).strip() != "":
+                        st.error(f"❌ PENDIENTE POR EL CLIENTE: {tarea}") 
     except Exception:
-        st.warning("⚠️ No se han definido o entregado los recaudos prioritarios en la matriz actual.")
+        pass
+
+    st.divider()
+
+    # --- 2. LAS 4 OBLIGACIONES PERIÓDICAS ---
+    # ¡ATENCIÓN COMANDANTE! Ponga aquí el número de fila real donde quedó este título en su Excel
+    FILA_PERIODICAS = 110 # <--- ¡CAMBIE ESTE 110 POR LA FILA CORRECTA!
+    f_codigo_o = FILA_PERIODICAS - 2
+
+    try:
+        if f_codigo_o < len(df):
+            titulo_o = df.iloc[f_codigo_o, col]
+            st.markdown(f"## 📋 **{titulo_o}**")
+            for j in range(4):
+                if (f_codigo_o + 1 + j) < len(df):
+                    reporte = df.iloc[f_codigo_o + 1 + j, col]
+                    if pd.notna(reporte) and str(reporte).strip() != "":
+                        st.error(f"❌ REPORTE MENSUAL FALTANTE: {reporte}")
+    except Exception:
+        pass
 
 except Exception as e:
     st.error(f"Error de sincronización con la base de datos de auditoría: {e}")
