@@ -14,8 +14,8 @@ for archivo in os.listdir(directorio_actual):
         ruta_logo = os.path.join(directorio_actual, archivo)
         break
 
-# --- PEGAR AQUÍ EL GID DE TR-18 ---
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=985636361"
+# --- URL TÁCTICA EN TIEMPO REAL (BYPASS CACHÉ GOOGLE) ---
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/gviz/tq?tqx=out:csv&gid=985636361"
 
 try:
     df = pd.read_csv(URL_SHEET)
@@ -57,15 +57,13 @@ try:
     ))
     st.plotly_chart(fig, use_container_width=True)
 
+    # --- MENSAJE DE ALERTA CORREGIDO (Una sola vez) ---
     st.markdown("---")
-    st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual (29.1%) expone a la operadora a sanciones severas o revocatoria por parte de CONATEL. La gestión se encuentra paralizada por falta de entrega de recaudos.")
+    st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual expone a la operadora a sanciones severas o revocatoria por parte de CONATEL. La gestión se encuentra paralizada por falta de entrega de recaudos.")
 
     # --- RELOJ INTERNO PARA EL MES DINÁMICO EN ESPAÑOL ---
     meses_esp = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
     mes_actual = meses_esp[datetime.date.today().month - 1]
-
-    st.markdown("---")
-    st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual expone a la operadora a sanciones severas. La gestión se encuentra paralizada por falta de entrega de recaudos.")
 
     # Definición de Columnas en Python (A=0, B=1, C=2)
     COL_MARCADOR = 0 
@@ -90,9 +88,9 @@ try:
                         # Limpiar el número (por si Pandas le pone un .0)
                         num_str = f"{str(numero).replace('.0', '')}. " if pd.notna(numero) and str(numero).strip() != "" else ""
                         
-                        # Si hay ALGO en la Columna A (asterisco, X, etc), se marca cumplido
-                        if pd.notna(marcador) and str(marcador).strip() != "":
-                            st.success(f"✅ COMPLETADO: ~~{num_str}{tarea}~~")
+                        # Lógica del Asterisco arreglada
+                        if pd.notna(marcador) and '*' in str(marcador):
+                            st.success(f"✅ COMPLETADO: ~~{num_str}{tarea}~~ *(Validado por LDK)*")
                         else:
                             st.error(f"❌ PENDIENTE POR EL CLIENTE: {num_str}{tarea}") 
     except Exception:
@@ -112,20 +110,24 @@ try:
                 fila_o = f_codigo_o + 1 + j
                 if fila_o < len(df):
                     marcador_o = df.iloc[fila_o, COL_MARCADOR]
-                    numero_o = df.iloc[fila_o, COL_NUMERO]
                     reporte = df.iloc[fila_o, COL_TEXTO]
                     
                     if pd.notna(reporte) and str(reporte).strip() != "":
-                        # Si detecta el asterisco en la Columna A
-                        if pd.notna(marca_rep) and '*' in str(marca_rep):
+                        # ¡AQUÍ ESTABA EL ERROR! Ahora lee 'marcador_o'
+                        if pd.notna(marcador_o) and '*' in str(marcador_o):
                             st.success(f"✅ ~~{reporte}~~ *(Validado por LDK)*")
                         else:
-                            # Si no hay asterisco, muestra el checkbox normal
+                            # ¡AQUÍ ESTABA LA INDENTACIÓN ROTA!
                             if st.checkbox(reporte, key=f"rep_{j}"):
-                            st.info(f"✅ Recibido para revisión LDK.")
+                                st.info(f"✅ Recibido para revisión LDK.")
 
     except Exception:
         pass
 
 except Exception as e:
     st.error(f"Error de sincronización con la base de datos de auditoría: {e}")
+
+# --- BOTÓN DE ACTUALIZACIÓN RESTAURADO ---
+st.divider()
+if st.button("🔄 Sincronizar Sistema LDK"):
+    st.rerun()
