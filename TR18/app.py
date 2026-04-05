@@ -77,7 +77,7 @@ try:
     COL_TEXTO = 2    
 
     # --- 1. LAS 20 PRIORIDADES ---
-    f_codigo_p = 85 # Fila 87 de Excel
+    f_codigo_p = 87 # Fila 87 de Excel
 
     try:
         if f_codigo_p < len(df):
