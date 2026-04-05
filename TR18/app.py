@@ -20,12 +20,19 @@ URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQya
 try:
     df = pd.read_csv(URL_SHEET)
 
-    # El Relojito de la Verdad
-    porcentaje_raw = df.iloc[1, 3]
-    valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
-    porcentaje = float(valor_limpio)
-    if porcentaje <= 1: porcentaje = porcentaje * 100
+    # --- EL PARACAÍDAS DE GUMERSINDA (Corrección del error 'False') ---
+    try:
+        porcentaje_raw = df.iloc[1, 3] # Pandas busca en la Fila 3, Columna D de su Excel
+        valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
+        porcentaje = float(valor_limpio)
+        if porcentaje <= 1: 
+            porcentaje = porcentaje * 100
+    except ValueError:
+        # Si explota porque encontró texto (como 'False'), usa 29.1 por defecto
+        porcentaje = 29.1
+        st.warning(f"⚠️ **Atención LDK:** La celda del porcentaje dice '{porcentaje_raw}'. Revise que el porcentaje esté en la Fila 3, Columna D de su Sheet. (Mostrando 29.1% como respaldo temporal).")
 
+    # --- CABECERA ---
     if ruta_logo:
         st.image(ruta_logo, width=90)
         st.markdown(f"### **TU RED 18, C.A.**")
@@ -35,16 +42,16 @@ try:
     st.caption("📍 Auditoría de Cumplimiento Regulatorio (CONATEL) - LDK")
     st.divider() 
 
-    # Gráfico en modo Alerta Severa
+    # --- RELOJ DE ALERTA ---
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = porcentaje,
-        title = {'text': "Nivel de Cumplimiento Regulatorio (ALERTA CRÍTICA)", 'font': {'color': "red"}},
+        title = {'text': "Nivel de Cumplimiento (ALERTA CRÍTICA)", 'font': {'color': "red"}},
         gauge = {
             'axis': {'range': [0, 100]},
             'bar': {'color': "darkred"},
             'steps': [
-                {'range': [0, 43], 'color': "#ffb3b3"}, # Fondo rojo claro de emergencia
+                {'range': [0, 43], 'color': "#ffb3b3"}, 
                 {'range': [43, 73], 'color': "yellow"},
                 {'range': [73, 100], 'color': "green"}
             ],
@@ -57,15 +64,14 @@ try:
     ))
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- MENSAJE DE ALERTA CORREGIDO (Una sola vez) ---
     st.markdown("---")
     st.error("🚨 **ESTADO DE EMERGENCIA REGULATORIA** 🚨\nEl nivel de cumplimiento actual expone a la operadora a sanciones severas o revocatoria por parte de CONATEL. La gestión se encuentra paralizada por falta de entrega de recaudos.")
 
-    # --- RELOJ INTERNO PARA EL MES DINÁMICO EN ESPAÑOL ---
+    # --- MES DINÁMICO ---
     meses_esp = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
     mes_actual = meses_esp[datetime.date.today().month - 1]
 
-    # Definición de Columnas en Python (A=0, B=1, C=2)
+    # Constantes de columnas
     COL_MARCADOR = 0 
     COL_NUMERO = 1   
     COL_TEXTO = 2    
@@ -85,10 +91,9 @@ try:
                     tarea = df.iloc[fila, COL_TEXTO] 
                     
                     if pd.notna(tarea) and str(tarea).strip() != "":
-                        # Limpiar el número (por si Pandas le pone un .0)
                         num_str = f"{str(numero).replace('.0', '')}. " if pd.notna(numero) and str(numero).strip() != "" else ""
                         
-                        # Lógica del Asterisco arreglada
+                        # Lógica del asterisco
                         if pd.notna(marcador) and '*' in str(marcador):
                             st.success(f"✅ COMPLETADO: ~~{num_str}{tarea}~~ *(Validado por LDK)*")
                         else:
@@ -98,8 +103,8 @@ try:
 
     st.divider()
 
-    # --- 2. LAS 4 OBLIGACIONES PERIÓDICAS ---
-    FILA_PERIODICAS = 110 # <--- ¡RECUERDE CAMBIAR ESTO POR LA FILA REAL EN SU EXCEL!
+    # --- 2. OBLIGACIONES PERIÓDICAS ---
+    FILA_PERIODICAS = 110 # ¡REVISE ESTA FILA EN SU EXCEL!
     f_codigo_o = FILA_PERIODICAS - 2
 
     try:
@@ -113,21 +118,18 @@ try:
                     reporte = df.iloc[fila_o, COL_TEXTO]
                     
                     if pd.notna(reporte) and str(reporte).strip() != "":
-                        # ¡AQUÍ ESTABA EL ERROR! Ahora lee 'marcador_o'
+                        # Lógica del asterisco
                         if pd.notna(marcador_o) and '*' in str(marcador_o):
                             st.success(f"✅ ~~{reporte}~~ *(Validado por LDK)*")
                         else:
-                            # ¡AQUÍ ESTABA LA INDENTACIÓN ROTA!
                             if st.checkbox(reporte, key=f"rep_{j}"):
                                 st.info(f"✅ Recibido para revisión LDK.")
-
     except Exception:
         pass
 
 except Exception as e:
     st.error(f"Error de sincronización con la base de datos de auditoría: {e}")
 
-# --- BOTÓN DE ACTUALIZACIÓN RESTAURADO ---
 st.divider()
 if st.button("🔄 Sincronizar Sistema LDK"):
     st.rerun()
