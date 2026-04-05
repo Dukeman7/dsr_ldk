@@ -22,7 +22,7 @@ try:
 
     # --- EL PARACAÍDAS DE GUMERSINDA (Corrección del error 'False') ---
     try:
-        porcentaje_raw = df.iloc[2, 3] # Pandas busca en la Fila 3, Columna D de su Excel
+        porcentaje_raw = df.iloc[1, 0] # Pandas busca en la Fila 3, Columna D de su Excel
         valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
         porcentaje = float(valor_limpio)
         if porcentaje <= 1: 
