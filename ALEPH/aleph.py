@@ -56,28 +56,45 @@ try:
     ))
     st.plotly_chart(fig, use_container_width=True)
 
-# --- 3. PRIORIDADES DEL MES ---
-    st.markdown(f"### 🎯 **{titulo_p}**")
+    # --- PARCHE ANTICRASH Y LECTURA DE ASTERISCOS ---
+    total_filas = len(df)
     
-    # Ampliado a 7 posibles prioridades
-    for i in range(7): 
-        tarea = df.iloc[86 + i, 2]
-        
-        # Esta línea asegura que no dibuje una casilla si la celda de Excel está vacía
-        if pd.notna(tarea) and str(tarea).strip() != "": 
-            # El checkbox es VISUAL para el cliente en esa sesión
-            if st.checkbox(f"{tarea}", key=f"prio_{i}"):
-                st.info("✅ Notificación visual. (Recuerde enviar el documento a LDK para auditoría final).")
+    # 🎯 PRIORIDADES DEL MES
+    if total_filas > 85:
+        titulo_p = df.iloc[85, 2]
+        st.markdown(f"## 🎯 **{titulo_p}**")
+        for i in range(7):
+            if (86 + i) < total_filas:
+                tarea = df.iloc[86 + i, 2]
+                marca = df.iloc[86 + i, 0] # LECTURA DE LA COLUMNA A
                 
-    # --- 4. OBLIGACIONES PERIÓDICAS ---
-    st.markdown(f"## 📋 **{titulo_o}**")
-    for j in range(4):
-        reporte = df.iloc[92 + j, 2]
-        if st.checkbox(reporte, key=f"rep_{j}"):
-            st.markdown(f"~~{reporte}~~ ✅")
+                if pd.notna(tarea) and str(tarea).strip() != "":
+                    # Si detecta el asterisco en la Columna A
+                    if pd.notna(marca) and '*' in str(marca):
+                        st.success(f"✅ ~~{i+1}. {tarea}~~ *(Validado por LDK)*")
+                    else:
+                        # Si no hay asterisco, muestra el checkbox normal
+                        if st.checkbox(f"{i+1}. {tarea}", key=f"prio_{i}"):
+                            st.info(f"✅ Recibido. Al validar esta evidencia, su cumplimiento subirá.")
 
-except Exception as e:
-    st.error(f"Error de sincronización: {e}")
+    # 📋 OBLIGACIONES PERIÓDICAS
+    if total_filas > 91:
+        st.divider()
+        titulo_o = df.iloc[95, 2]
+        st.markdown(f"## 📋 **{titulo_o}**")
+        for j in range(4):
+            if (96 + j) < total_filas:
+                reporte = df.iloc[96 + j, 2]
+                marca_rep = df.iloc[96 + j, 0] # LECTURA DE LA COLUMNA A
+                
+                if pd.notna(reporte) and str(reporte).strip() != "":
+                    # Si detecta el asterisco en la Columna A
+                    if pd.notna(marca_rep) and '*' in str(marca_rep):
+                        st.success(f"✅ ~~{reporte}~~ *(Validado por LDK)*")
+                    else:
+                        # Si no hay asterisco, muestra el checkbox normal
+                        if st.checkbox(reporte, key=f"rep_{j}"):
+                            st.info(f"✅ Recibido para revisión LDK.")
 
 # Botón de actualización
 if st.button("🔄 Sincronizar con Auditoría LDK"):
