@@ -59,7 +59,7 @@ try:
 
     if total_filas > 91:
         st.divider()
-        titulo_o = df.iloc[91, 2]
+        titulo_o = df.iloc[95, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
             if (95 + j) < total_filas:
