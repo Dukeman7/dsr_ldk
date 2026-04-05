@@ -29,8 +29,8 @@ try:
             porcentaje = porcentaje * 100
     except ValueError:
         # Si explota porque encontró texto (como 'False'), usa 29.1 por defecto
-        porcentaje = 29.1
-        st.warning(f"⚠️ **Atención LDK:** La celda del porcentaje dice '{porcentaje_raw}'. Revise que el porcentaje esté en la Fila 3, Columna D de su Sheet. (Mostrando 29.1% como respaldo temporal).")
+        porcentaje = 33.3
+        st.warning(f"⚠️ **Atención LDK:** La celda del porcentaje dice '{porcentaje_raw}'. Revise que el porcentaje esté en la Fila 3, Columna D de su Sheet. ")
 
     # --- CABECERA ---
     if ruta_logo:
