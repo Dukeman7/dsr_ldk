@@ -116,13 +116,14 @@ try:
                     reporte = df.iloc[fila_o, COL_TEXTO]
                     
                     if pd.notna(reporte) and str(reporte).strip() != "":
-                        num_str_o = f"{str(numero_o).replace('.0', '')}. " if pd.notna(numero_o) and str(numero_o).strip() != "" else ""
-                        
-                        # Las periódicas casi siempre estarán cumplidas por usted
-                        if pd.notna(marcador_o) and str(marcador_o).strip() != "":
-                            st.success(f"✅ GESTIÓN ASESOR CUMPLIDA: ~~{num_str_o}{reporte}~~")
+                        # Si detecta el asterisco en la Columna A
+                        if pd.notna(marca_rep) and '*' in str(marca_rep):
+                            st.success(f"✅ ~~{reporte}~~ *(Validado por LDK)*")
                         else:
-                            st.error(f"❌ REPORTE MENSUAL FALTANTE: {num_str_o}{reporte}")
+                            # Si no hay asterisco, muestra el checkbox normal
+                            if st.checkbox(reporte, key=f"rep_{j}"):
+                            st.info(f"✅ Recibido para revisión LDK.")
+
     except Exception:
         pass
 
