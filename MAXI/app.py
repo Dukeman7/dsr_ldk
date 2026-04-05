@@ -50,7 +50,7 @@ try:
     if total_filas > 85:
         titulo_p = df.iloc[85, 2]
         st.markdown(f"## 🎯 **{titulo_p}**")
-        for i in range(4):
+        for i in range(7):
             if (86 + i) < total_filas:
                 tarea = df.iloc[86 + i, 2]
                 if pd.notna(tarea) and str(tarea).strip() != "":
@@ -62,8 +62,8 @@ try:
         titulo_o = df.iloc[91, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
-            if (92 + j) < total_filas:
-                reporte = df.iloc[92 + j, 2]
+            if (94 + j) < total_filas:
+                reporte = df.iloc[94 + j, 2]
                 if pd.notna(reporte) and str(reporte).strip() != "":
                     if st.checkbox(reporte, key=f"rep_{j}"):
                         st.markdown(f"~~{reporte}~~ ✅")
