@@ -104,7 +104,7 @@ try:
     st.divider()
 
     # --- 2. OBLIGACIONES PERIÓDICAS ---
-    FILA_PERIODICAS = 104 # ¡REVISE ESTA FILA EN SU EXCEL!
+    FILA_PERIODICAS = 110 # ¡REVISE ESTA FILA EN SU EXCEL!
     f_codigo_o = FILA_PERIODICAS - 2
 
     try:
