@@ -20,18 +20,30 @@ URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQya
 try:
     df = pd.read_csv(URL_SHEET)
 
-    # --- EL PARACAÍDAS DE GUMERSINDA (Corrección del error 'False') ---
+# --- EL PARACAÍDAS DE GUMERSINDA V2 (Anti-Guión y Anti-NaN) ---
     try:
-        porcentaje_raw = df.iloc[1, 0] # Pandas busca en la Fila 3, Columna D de su Excel
+        # Usted indicó A2. En código eso es Fila 1 (porque la 0 es el título), Columna 0.
+        porcentaje_raw = df.iloc[1, 0] 
+        
+        # 1. Chequeo de celda vacía o nula de Pandas
+        if pd.isna(porcentaje_raw) or str(porcentaje_raw).strip() == "":
+            raise ValueError("Celda vacía detectada.")
+            
+        # 2. Limpieza del texto
         valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
         porcentaje = float(valor_limpio)
+        
+        # 3. Chequeo por si el resultado matemático fue un 'NaN' literal
+        if pd.isna(porcentaje):
+            raise ValueError("El cálculo resultó en un valor nulo.")
+            
         if porcentaje <= 1: 
             porcentaje = porcentaje * 100
-    except ValueError:
-        # Si explota porque encontró texto (como 'False'), usa 29.1 por defecto
+            
+    except Exception as e:
+        # Si la celda está vacía, tiene texto, o da error, salta aquí y activa el respaldo.
         porcentaje = 33.3
-        st.warning(f"⚠️ **Atención LDK:** La celda del porcentaje dice '{porcentaje_raw}'. Revise que el porcentaje esté en la Fila 3, Columna D de su Sheet. ")
-
+        st.warning(f"⚠️ **Atención LDK:** No se detectó un número válido en la celda A2. Dato leído: '{porcentaje_raw}'. Mostrando aguja en 33.3% como respaldo.")
     # --- CABECERA ---
     if ruta_logo:
         st.image(ruta_logo, width=90)
