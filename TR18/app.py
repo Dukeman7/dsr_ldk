@@ -22,7 +22,7 @@ try:
 
     # --- EL PARACAÍDAS DE GUMERSINDA (Corrección del error 'False') ---
     try:
-        porcentaje_raw = df.iloc[0, 3] # Pandas busca en la Fila 3, Columna D de su Excel
+        porcentaje_raw = df.iloc[2, 3] # Pandas busca en la Fila 3, Columna D de su Excel
         valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
         porcentaje = float(valor_limpio)
         if porcentaje <= 1: 
@@ -104,14 +104,14 @@ try:
     st.divider()
 
     # --- 2. OBLIGACIONES PERIÓDICAS ---
-    FILA_PERIODICAS = 110 # ¡REVISE ESTA FILA EN SU EXCEL!
+    FILA_PERIODICAS = 96 # ¡REVISE ESTA FILA EN SU EXCEL!
     f_codigo_o = FILA_PERIODICAS - 2
 
     try:
         if f_codigo_o < len(df):
             st.markdown(f"## 📋 **Obligaciones Periódicas Asesor ({mes_actual})**")
             
-            for j in range(4):
+            for j in range(6):
                 fila_o = f_codigo_o + 1 + j
                 if fila_o < len(df):
                     marcador_o = df.iloc[fila_o, COL_MARCADOR]
