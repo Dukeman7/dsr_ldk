@@ -20,30 +20,12 @@ URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQya
 try:
     df = pd.read_csv(URL_SHEET)
 
-# --- EL PARACAÍDAS DE GUMERSINDA V2 (Anti-Guión y Anti-NaN) ---
+# --- EL PARACAÍDAS DE GUMERSINDA ---
     try:
-        # Usted indicó A2. En código eso es Fila 1 (porque la 0 es el título), Columna 0.
-        porcentaje_raw = df.iloc[1, 0] 
-        
-        # 1. Chequeo de celda vacía o nula de Pandas
-        if pd.isna(porcentaje_raw) or str(porcentaje_raw).strip() == "":
-            raise ValueError("Celda vacía detectada.")
-            
-        # 2. Limpieza del texto
+        # [0, 0] es exactamente la celda A2 de su Excel
+        porcentaje_raw = df.iloc[0, 0] 
         valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
-        porcentaje = float(valor_limpio)
         
-        # 3. Chequeo por si el resultado matemático fue un 'NaN' literal
-        if pd.isna(porcentaje):
-            raise ValueError("El cálculo resultó en un valor nulo.")
-            
-        if porcentaje <= 1: 
-            porcentaje = porcentaje * 100
-            
-    except Exception as e:
-        # Si la celda está vacía, tiene texto, o da error, salta aquí y activa el respaldo.
-        porcentaje = 33.3
-        st.warning(f"⚠️ **Atención LDK:** No se detectó un número válido en la celda A2. Dato leído: '{porcentaje_raw}'. Mostrando aguja en 33.3% como respaldo.")
     # --- CABECERA ---
     if ruta_logo:
         st.image(ruta_logo, width=90)
