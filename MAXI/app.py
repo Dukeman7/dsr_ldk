@@ -62,8 +62,8 @@ try:
         titulo_o = df.iloc[95, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
-            if (95 + j) < total_filas:
-                reporte = df.iloc[95 + j, 2]
+            if (96 + j) < total_filas:
+                reporte = df.iloc[96 + j, 2]
                 if pd.notna(reporte) and str(reporte).strip() != "":
                     if st.checkbox(reporte, key=f"rep_{j}"):
                         st.markdown(f"~~{reporte}~~ ✅")
