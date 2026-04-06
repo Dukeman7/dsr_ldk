@@ -10,7 +10,7 @@ st.set_page_config(page_title="DSR_LDK - ALEPH", layout="wide")
 ruta_logo = os.path.join(os.path.dirname(__file__), "logo.png") 
 
 # URL de Exportación CSV
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=985636361"
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=985636361#gid=985636361"
 
 try:
     df = cargar_datos(URL_SHEET)
