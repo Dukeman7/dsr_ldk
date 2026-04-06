@@ -81,12 +81,12 @@ try:
     # 📋 OBLIGACIONES PERIÓDICAS
     if total_filas > 91:
         st.divider()
-        titulo_o = df.iloc[95, 2]
+        titulo_o = df.iloc[100, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
             if (96 + j) < total_filas:
-                reporte = df.iloc[96 + j, 2]
-                marca_rep = df.iloc[96 + j, 0] # LECTURA DE LA COLUMNA A
+                reporte = df.iloc[101 + j, 2]
+                marca_rep = df.iloc[101 + j, 0] # LECTURA DE LA COLUMNA A
                 
                 if pd.notna(reporte) and str(reporte).strip() != "":
                     # Si detecta el asterisco en la Columna A
