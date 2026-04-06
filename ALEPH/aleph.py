@@ -13,33 +13,25 @@ ruta_logo = os.path.join(os.path.dirname(__file__), "logo.png")
 URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=958551789"
 
 try:
-    # Leemos todo el bloque de datos
-    df = pd.read_csv(URL_SHEET)
+    df = cargar_datos(URL_SHEET)
 
-    # --- 1. LIMPIEZA DEL PORCENTAJE ---
+    # --- EL RELOJITO ---
     porcentaje_raw = df.iloc[1, 3]
     valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
     porcentaje = float(valor_limpio)
     if porcentaje <= 1: porcentaje = porcentaje * 100
 
-    # --- 2. TÍTULOS DINÁMICOS ---
-    titulo_p = df.iloc[85, 2]
-    titulo_o = df.iloc[91, 2]
-
-    # --- INTERFAZ (Logo o Nombre) ---
-    # Intentamos primero con el logo local
+    # --- CABECERA ---
     if os.path.exists(ruta_logo):
         st.image(ruta_logo, width=90)
-        # Opcional: Puedes dejar el nombre también debajo del logo
-        st.markdown(f"### **ALEPH NETWORKS, C.A.**")
+        st.markdown(f"### **ALEPH, C.A.**")
     else:
-        # Si el archivo no existe, el nombre sale en grande (Título #)
-        st.markdown(f"# **ALEPH NETWORKS, C.A.**")
+        st.markdown(f"# **ALEPH, C.A.**")
     
     st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
-    st.divider() # Una línea para separar la cabecera del reloj
+    st.divider() 
 
-    # EL RELOJITO
+    # --- GRÁFICO ---
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = porcentaje,
@@ -63,7 +55,7 @@ try:
     if total_filas > 85:
         titulo_p = df.iloc[85, 2]
         st.markdown(f"## 🎯 **{titulo_p}**")
-        for i in range(7):
+        for i in range(10):
             if (86 + i) < total_filas:
                 tarea = df.iloc[86 + i, 2]
                 marca = df.iloc[86 + i, 0] # LECTURA DE LA COLUMNA A
@@ -80,12 +72,12 @@ try:
     # 📋 OBLIGACIONES PERIÓDICAS
     if total_filas > 91:
         st.divider()
-        titulo_o = df.iloc[95, 2]
+        titulo_o = df.iloc[100, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
             if (96 + j) < total_filas:
-                reporte = df.iloc[96 + j, 2]
-                marca_rep = df.iloc[96 + j, 0] # LECTURA DE LA COLUMNA A
+                reporte = df.iloc[100 + j, 2]
+                marca_rep = df.iloc[100 + j, 0] # LECTURA DE LA COLUMNA A
                 
                 if pd.notna(reporte) and str(reporte).strip() != "":
                     # Si detecta el asterisco en la Columna A
@@ -96,6 +88,5 @@ try:
                         if st.checkbox(reporte, key=f"rep_{j}"):
                             st.info(f"✅ Recibido para revisión LDK.")
 
-# Botón de actualización
-if st.button("🔄 Sincronizar con Auditoría LDK"):
-    st.rerun()
+except Exception as e:
+    st.error(f"Error de sincronización: {e}")
