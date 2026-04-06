@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import os
+import time
 
 # 1. ESTO SIEMPRE VA DE PRIMERO
 st.set_page_config(page_title="DSR_LDK - ALEPH", layout="wide")
@@ -9,10 +10,18 @@ st.set_page_config(page_title="DSR_LDK - ALEPH", layout="wide")
 # 2. RUTA DEL LOGO
 ruta_logo = os.path.join(os.path.dirname(__file__), "logo.png") 
 
-# URL de Exportación CSV
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=985636361"
+# --- EL MOTOR FALTANTE (LA HERRAMIENTA QUE NO EXISTÍA) ---
+@st.cache_data(ttl=600)
+def cargar_datos(url):
+    # Bypass de caché para obligar a Google a dar data fresca
+    url_fresca = f"{url}&t={time.time()}" 
+    return pd.read_csv(url_fresca)
+
+# URL de Exportación CSV (¡CON EL GID CORRECTO DE ALEPH!)
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=958551789"
 
 try:
+    # Ahora sí sabe qué es cargar_datos
     df = cargar_datos(URL_SHEET)
 
     # --- EL RELOJITO ---
@@ -24,9 +33,9 @@ try:
     # --- CABECERA ---
     if os.path.exists(ruta_logo):
         st.image(ruta_logo, width=90)
-        st.markdown(f"### **ALEPH, C.A.**")
+        st.markdown(f"### **ALEPH NETWORKS, C.A.**")
     else:
-        st.markdown(f"# **ALEPH, C.A.**")
+        st.markdown(f"# **ALEPH NETWORKS, C.A.**")
     
     st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
     st.divider() 
@@ -90,3 +99,10 @@ try:
 
 except Exception as e:
     st.error(f"Error de sincronización: {e}")
+
+st.divider()
+
+# Botón de actualización
+if st.button("🔄 Sincronizar Sistema LDK"):
+    st.cache_data.clear()
+    st.rerun()
