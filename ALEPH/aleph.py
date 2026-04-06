@@ -55,7 +55,7 @@ try:
     if total_filas > 85:
         titulo_p = df.iloc[85, 2]
         st.markdown(f"## 🎯 **{titulo_p}**")
-        for i in range(10):
+        for i in range(7):
             if (86 + i) < total_filas:
                 tarea = df.iloc[86 + i, 2]
                 marca = df.iloc[86 + i, 0] # LECTURA DE LA COLUMNA A
@@ -72,12 +72,12 @@ try:
     # 📋 OBLIGACIONES PERIÓDICAS
     if total_filas > 91:
         st.divider()
-        titulo_o = df.iloc[100, 2]
+        titulo_o = df.iloc[95, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
             if (96 + j) < total_filas:
-                reporte = df.iloc[100 + j, 2]
-                marca_rep = df.iloc[100 + j, 0] # LECTURA DE LA COLUMNA A
+                reporte = df.iloc[96 + j, 2]
+                marca_rep = df.iloc[96 + j, 0] # LECTURA DE LA COLUMNA A
                 
                 if pd.notna(reporte) and str(reporte).strip() != "":
                     # Si detecta el asterisco en la Columna A
