@@ -6,20 +6,12 @@ import datetime
 
 st.set_page_config(page_title="DSR_LDK - TU RED 18, C.A.", layout="wide")
 
-# Buscador de logo a prueba de balas
-ruta_logo = None
-directorio_actual = os.path.dirname(__file__)
-for archivo in os.listdir(directorio_actual):
-    if archivo.lower() in ['logor.png', 'logor.jpg', 'logor.jpeg']:
-        ruta_logo = os.path.join(directorio_actual, archivo)
-        break
-
 # 2. BLINDAJE DE CACHÉ (Para no saturar Google Sheets)
 @st.cache_data(ttl=600)
 def cargar_datos(url):
     return pd.read_csv(url)
 
-ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO.png") 
+ruta_logo = os.path.join(os.path.dirname(__file__), "logor.png") 
 
 # --- ¡GID DE TR 18 AQUÍ! ---
 URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=985636361"
