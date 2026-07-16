@@ -18,7 +18,7 @@ def cargar_datos(url):
     # engine='python' y on_bad_lines='skip' eliminan el error de las comillas
     return pd.read_csv(url_fresca, engine='python', on_bad_lines='skip')
 
-# URL LIMPIA: Solo el ID y el GID
+# gid de GIGATEL
 URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=1010668241"
 
 try:
