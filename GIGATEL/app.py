@@ -16,7 +16,7 @@ ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png")
 
 # --- ¡PONGA EL GID DE GIGATEL AQUÍ! ---
 # Reemplaza toda esta URL cuando tengas la nueva
-URL_SHEET = "https://docs.google.com/spreadsheets/d/TU_ID_DE_DOCUMENTO_AQUI/export?format=csv&gid=1010668241"
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=1010668241#gid=1010668241"
 
 try:
     df = cargar_datos(URL_SHEET)
