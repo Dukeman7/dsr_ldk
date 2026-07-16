@@ -9,17 +9,15 @@ st.set_page_config(page_title="DSR_LDK - GIGATEL", layout="wide")
 # 2. BLINDAJE DE CACHÉ Y LECTURA A PRUEBA DE BALAS
 @st.cache_data(ttl=600)
 def cargar_datos(url):
-    # Creamos 30 columnas "fantasma" numeradas del 0 al 29
     columnas_seguras = [str(i) for i in range(30)]
     
-    # engine='python' mastica los errores de formato sin romper el código
-    # header=0 mantiene la primera fila como título para no dañar tus coordenadas iloc
-    return pd.read_csv(url, names=columnas_seguras, header=0, engine='python')
+    # on_bad_lines='skip' le dice a Pandas: "Si una fila tiene comillas rotas o basura, ignórala y no tumbes la app"
+    return pd.read_csv(url, names=columnas_seguras, header=0, engine='python', on_bad_lines='skip')
 
-# Asegúrate de tener el logo de Gigatel en la misma carpeta con este nombre
+#  logo de Gigatel 
 ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png") 
 
-# --- ¡PONGA EL GID DE GIGATEL AQUÍ! ---
+# --- GID DE GIGATEL  ---
 # Reemplaza toda esta URL cuando tengas la nueva
 URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=1010668241#gid=1010668241"
 
