@@ -6,12 +6,15 @@ import os
 # 1. CONFIGURACIÓN INICIAL
 st.set_page_config(page_title="DSR_LDK - GIGATEL", layout="wide")
 
-# 2. BLINDAJE DE CACHÉ Y LECTURA ESTRICTA
+# 2. BLINDAJE DE CACHÉ Y LECTURA A PRUEBA DE BALAS
 @st.cache_data(ttl=600)
 def cargar_datos(url):
-    # usecols=[0, 1, 2, 3] fuerza a Pandas a leer solo las columnas A, B, C y D.
-    # Así ignoramos cualquier basura extraña en las filas.
-    return pd.read_csv(url, usecols=[0, 1, 2, 3])
+    # Creamos 30 columnas "fantasma" numeradas del 0 al 29
+    columnas_seguras = [str(i) for i in range(30)]
+    
+    # engine='python' mastica los errores de formato sin romper el código
+    # header=0 mantiene la primera fila como título para no dañar tus coordenadas iloc
+    return pd.read_csv(url, names=columnas_seguras, header=0, engine='python')
 
 # Asegúrate de tener el logo de Gigatel en la misma carpeta con este nombre
 ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png") 
