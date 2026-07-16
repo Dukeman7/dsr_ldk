@@ -2,26 +2,26 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import os
+import time
 
-# 1. CONFIGURACIÓN INICIAL
+# 1. APP
 st.set_page_config(page_title="DSR_LDK - GIGATEL", layout="wide")
 
-# 2. BLINDAJE DE CACHÉ Y LECTURA A PRUEBA DE BALAS
-@st.cache_data(ttl=600)
-def cargar_datos(url):
-    columnas_seguras = [str(i) for i in range(30)]
-    
-    # on_bad_lines='skip' le dice a Pandas: "Si una fila tiene comillas rotas o basura, ignórala y no tumbes la app"
-    return pd.read_csv(url, names=columnas_seguras, header=0, engine='python', on_bad_lines='skip')
-
-#  logo de Gigatel 
+# 2. RUTA DEL LOGO
 ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png") 
 
-# --- GID DE GIGATEL  ---
-# Reemplaza toda esta URL cuando tengas la nueva
+# --- EL MOTOR  ---
+@st.cache_data(ttl=600)
+def cargar_datos(url):
+    # Bypass de caché para obligar a Google a dar data fresca
+    url_fresca = f"{url}&t={time.time()}" 
+    return pd.read_csv(url_fresca)
+
+# URL de Exportación CSV GID DE GIGATEL
 URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=1010668241#gid=1010668241"
 
 try:
+    # Ahora sí sabe qué es cargar_datos
     df = cargar_datos(URL_SHEET)
 
     # --- EL RELOJITO ---
@@ -33,9 +33,9 @@ try:
     # --- CABECERA ---
     if os.path.exists(ruta_logo):
         st.image(ruta_logo, width=90)
-        st.markdown(f"### **GIGATEL (Telecomunicaciones RHJ, C.A.)**")
+        st.markdown(f"### **ALEPH NETWORKS, C.A.**")
     else:
-        st.markdown(f"# **GIGATEL (Telecomunicaciones RHJ, C.A.)**")
+        st.markdown(f"# **ALEPH NETWORKS, C.A.**")
     
     st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
     st.divider() 
@@ -81,12 +81,12 @@ try:
     # 📋 OBLIGACIONES PERIÓDICAS
     if total_filas > 91:
         st.divider()
-        titulo_o = df.iloc[95, 2]
+        titulo_o = df.iloc[100, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
             if (96 + j) < total_filas:
-                reporte = df.iloc[96 + j, 2]
-                marca_rep = df.iloc[96 + j, 0] # LECTURA DE LA COLUMNA A
+                reporte = df.iloc[101 + j, 2]
+                marca_rep = df.iloc[101 + j, 0] # LECTURA DE LA COLUMNA A
                 
                 if pd.notna(reporte) and str(reporte).strip() != "":
                     # Si detecta el asterisco en la Columna A
@@ -102,7 +102,6 @@ except Exception as e:
 
 st.divider()
 
-# Botón que limpia la memoria y fuerza la lectura de la hoja
-if st.button("🔄 Sincronizar con Auditoría LDK"):
+# Botón de actualización
+if st.button("🔄 Sincronizar Sistema LDK"):
     st.cache_data.clear()
-    st.rerun()
