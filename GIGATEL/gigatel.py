@@ -13,13 +13,13 @@ ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png")
 # --- EL MOTOR BLINDADO ---
 @st.cache_data(ttl=600)
 def cargar_datos(url):
-    # Forzamos la descarga del CSV limpio
-    url_fresca = f"{url}&t={time.time()}"
-    # engine='python' y on_bad_lines='skip' eliminan el error de las comillas
-    return pd.read_csv(url_fresca, engine='python', on_bad_lines='skip')
+    # Leemos el Excel completo
+    xl = pd.ExcelFile(url)
+    # Aquí pones el NOMBRE EXACTO de la pestaña en tu Google Sheet (ej: "GIGATEL")
+    return pd.read_excel(xl, sheet_name="GIGATEL")
 
-# gid de GIGATEL
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=csv&gid=1010668241"
+# URL BASE SIN GID
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=xlsx"
 
 try:
     df = cargar_datos(URL_SHEET)
