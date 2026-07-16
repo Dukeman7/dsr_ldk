@@ -6,10 +6,12 @@ import os
 # 1. CONFIGURACIÓN INICIAL
 st.set_page_config(page_title="DSR_LDK - GIGATEL", layout="wide")
 
-# 2. BLINDAJE DE CACHÉ (Para no saturar Google Sheets)
+# 2. BLINDAJE DE CACHÉ Y LECTURA ESTRICTA
 @st.cache_data(ttl=600)
 def cargar_datos(url):
-    return pd.read_csv(url)
+    # usecols=[0, 1, 2, 3] fuerza a Pandas a leer solo las columnas A, B, C y D.
+    # Así ignoramos cualquier basura extraña en las filas.
+    return pd.read_csv(url, usecols=[0, 1, 2, 3])
 
 # Asegúrate de tener el logo de Gigatel en la misma carpeta con este nombre
 ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png") 
