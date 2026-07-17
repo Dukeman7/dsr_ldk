@@ -32,7 +32,7 @@ try:
 
     # --- CABECERA ---
     if os.path.exists(ruta_logo):
-        st.image(ruta_logo, width=90)
+        st.image(ruta_logo, width=150)
         st.markdown(f"### **GIGATEL (Telecomunicaciones RHJ, C.A.)**")
     else:
         st.markdown(f"# **GIGATEL (Telecomunicaciones RHJ, C.A.)**")
