@@ -74,12 +74,12 @@ try:
                             st.info(f"✅ Recibido. Al validar esta evidencia, su cumplimiento subirá.")
 
     # --- LECTURA DE OBLIGACIONES ---
-    if total_filas > 100:
+    if total_filas > 91:
         st.divider()
         titulo_o = df.iloc[100, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
         for j in range(4):
-            if (101 + j) < total_filas:
+            if (96 + j) < total_filas:
                 reporte = df.iloc[101 + j, 2]
                 marca_rep = df.iloc[101 + j, 0]
                 if pd.notna(reporte) and str(reporte).strip() != "":
