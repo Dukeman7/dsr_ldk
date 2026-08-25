@@ -168,8 +168,8 @@ except Exception as e:
   st.error(f"Error de sincronización con el motor LDK: {e}")
 
 # --- DEPURACIÓN RÁPIDA (Comenta esto luego cuando ya lo veas) ---
-    with st.expander("🔍 Ver contenido de la tabla (Diagnóstico LDK)"):
-      st.write(df.head(25))  # Muestra las primeras 25 filas del Excel
+with st.expander("🔍 Ver contenido de la tabla (Diagnóstico LDK)"):
+  st.write(df.head(25))  # Muestra las primeras 25 filas del Excel
 
 st.divider()
 # Botón único con key forzada para evitar el choque de IDs
