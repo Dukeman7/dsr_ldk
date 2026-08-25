@@ -46,9 +46,10 @@ URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQya
 try:
   df = cargar_datos(URL_SHEET)
 
-  # --- EL RELOJITO (Porcentaje de Cumplimiento) ---
+ # --- EL RELOJITO (Leyendo exactamente la celda D2) ---
   try:
-    porcentaje_raw = df.iloc[0, 1] if pd.notna(df.iloc[0, 1]) else 17.7
+    # D2 corresponde a la fila 0, columna 3 en Pandas (A=0, B=1, C=2, D=3)
+    porcentaje_raw = df.iloc[0, 3] if pd.notna(df.iloc[0, 3]) else 29.7
     valor_limpio = (
         str(porcentaje_raw).replace(",", ".").replace("%", "").strip()
     )
@@ -56,7 +57,7 @@ try:
     if porcentaje <= 1:
       porcentaje = porcentaje * 100
   except:
-    porcentaje = 17.7  # Valor seguro basado en tus datos
+    porcentaje = 33.7  # Valor seguro de respaldo
 
   # --- CABECERA ---
   if os.path.exists(ruta_logo):
