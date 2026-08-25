@@ -35,6 +35,7 @@ mes_actual = meses_es[datetime.datetime.now().month]
 @st.cache_data(ttl=600)
 def cargar_datos(url):
   response = requests.get(url)
+  # Forzamos explícitamente el nombre de la pestaña en mayúsculas o tal como la tengas en el Excel
   return pd.read_excel(
       io.BytesIO(response.content), sheet_name="DAYCO", engine="openpyxl"
   )
