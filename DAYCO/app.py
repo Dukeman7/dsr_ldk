@@ -22,7 +22,6 @@ mes_actual = meses_es[datetime.datetime.now().month]
 @st.cache_data(ttl=600)
 def cargar_datos(url):
     xl = pd.ExcelFile(url)
-    # Cambia "DAYCO" si el nombre de tu pestaña es diferente
     return pd.read_excel(xl, sheet_name="DAYCO")
 
 URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=1597813868#gid=1597813868"
@@ -43,9 +42,9 @@ try:
     # --- CABECERA ---
     if os.path.exists(ruta_logo):
         st.image(ruta_logo, width=150)
-        st.markdown(f"### **DAYCO TELECOM, C.A.**")
+        st.markdown("### **DAYCO TELECOM, C.A.**")
     else:
-        st.markdown(f"# **DAYCO TELECOM, C.A.**")
+        st.markdown("# **DAYCO TELECOM, C.A.**")
     
     st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
     st.divider() 
@@ -67,38 +66,35 @@ try:
     ))
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- BÚSQUEDA INTELIGENTE DE SECCIONES (EVITA ERRORES DE FILAS) ---
+    # --- BÚSQUEDA INTELIGENTE DE SECCIONES ---
     df_str = df.astype(str)
     
-    # Búsqueda flexible de prioridades adaptada al mes en curso o genérica
     patron_prio = f"PRIORIDADES DEL MES DE {mes_actual}"
     idx_prio = df_str[df_str.apply(lambda row: row.astype(str).str.contains(patron_prio, case=False).any(), axis=1)].index
     
-    # Si por alguna razón exacta no encuentra la del mes, busca una genérica "PRIORIDADES"
     if len(idx_prio) == 0:
         idx_prio = df_str[df_str.apply(lambda row: row.astype(str).str.contains("PRIORIDADES", case=False).any(), axis=1)].index
 
-    # Encontrar índice de Obligaciones
     idx_obli = df_str[df_str.apply(lambda row: row.astype(str).str.contains("OBLIGACIONES PERIÓDICAS", case=False).any(), axis=1)].index
 
     # --- LECTURA DE PRIORIDADES ---
     if len(idx_prio) > 0:
         fila_p = idx_prio[0]
-        # Forzamos a mostrar el título dinámico con el mes actual en curso
         titulo_p = f"PRIORIDADES DEL MES DE {mes_actual}"
         st.markdown(f"## 🎯 **{titulo_p}**")
         
-        # Leemos las filas siguientes que tengan datos de prioridades (máximo 9 según tu estructura)
         for i in range(1, 10):
             sig_fila = fila_p + i
             if sig_fila < len(df):
                 tarea = df.iloc[sig_fila, 2] if df.shape[1] > 2 else None
                 marca = df.iloc[sig_fila, 1] if df.shape[1] > 1 else None 
                 if pd.notna(tarea) and str(tarea).strip() != "" and "OBLIGACIONES" not in str(tarea):
+                    # Key totalmente única con prefijo de sección
+                    checkbox_key = f"chk_prio_row_{sig_fila}"
                     if pd.notna(marca) and '*' in str(marca):
                         st.success(f"✅ ~~{i}. {tarea}~~ *(Validado por LDK)*")
                     else:
-                        if st.checkbox(f"{i}. {tarea}", key=f"prio_{sig_fila}"):
+                        if st.checkbox(f"{i}. {tarea}", key=checkbox_key):
                             st.info(f"✅ Recibido. Al validar esta evidencia, su cumplimiento subirá.")
 
     # --- LECTURA DE OBLIGACIONES ---
@@ -114,21 +110,19 @@ try:
                 reporte = df.iloc[sig_fila_o, 2] if df.shape[1] > 2 else None
                 marca_rep = df.iloc[sig_fila_o, 1] if df.shape[1] > 1 else None
                 if pd.notna(reporte) and str(reporte).strip() != "":
+                    # Key totalmente única con prefijo de sección
+                    checkbox_key_obli = f"chk_obli_row_{sig_fila_o}"
                     if pd.notna(marca_rep) and '*' in str(marca_rep):
                         st.success(f"✅ ~~{reporte}~~ *(Validado por LDK)*")
                     else:
-                        if st.checkbox(reporte, key=f"rep_{sig_fila_o}"):
+                        if st.checkbox(reporte, key=checkbox_key_obli):
                             st.info(f"✅ Recibido para revisión LDK.")
 
 except Exception as e:
     st.error(f"Error de sincronización con el motor LDK: {e}")
 
 st.divider()
-if st.button("🔄 Sincronizar Sistema LDK"):
-    st.cache_data.clear()
-    st.rerun()
-
-st.divider()
-if st.button("🔄 Sincronizar Sistema LDK"):
+# Botón con identificador y manejo limpio
+if st.button("🔄 Sincronizar Sistema LDK", key="btn_sincronizar_ldk"):
     st.cache_data.clear()
     st.rerun()
