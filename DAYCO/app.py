@@ -40,7 +40,7 @@ def cargar_datos(url):
   )
 
 
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=xlsx&gid=1597813868"
+URL_SHEET = "URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=xlsx""
 
 try:
   df = cargar_datos(URL_SHEET)
