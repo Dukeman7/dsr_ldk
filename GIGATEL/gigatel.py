@@ -17,8 +17,8 @@ def cargar_datos(url):
 
 ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png")
 
-# URL de exportación CSV con el GID exacto de Dayco
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=1010668241#gid=1010668241"
+# URL de exportación XLSX con el GID exacto de GIGATEL
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=xlsx&gid=1010668241"
 
 try:
     df = cargar_datos(URL_SHEET)
