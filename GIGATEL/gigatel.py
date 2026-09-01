@@ -1,50 +1,44 @@
-import streamlit as st
-import pandas as pd
-import plotly.graph_objects as go
+import datetime
 import os
+import plotly.graph_objects as go
+import pandas as pd
+import streamlit as st
 
 # 1. CONFIGURACIÓN DE LA PÁGINA
 st.set_page_config(page_title="DSR_LDK - GIGATEL", layout="wide")
 
-# 2. RUTA DEL LOGO
-ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png") 
 
-# --- EL MOTOR BLINDADO ---
+# 2. BLINDAJE DE CACHÉ Y LECTURA CSV
 @st.cache_data(ttl=600)
 def cargar_datos(url):
-    xl = pd.ExcelFile(url)
-    # Cambia "GIGATEL" si el nombre de tu pestaña es diferente
-    return pd.read_excel(xl, sheet_name="GIGATEL")
+  return pd.read_csv(url)
 
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/export?format=xlsx"
+
+ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png")
+
+# URL de exportación CSV con el GID exacto de Dayco
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1GYEizLwSybQ9-ezFD1gPnSytQyaNF2DWiJrwKcR68V4/edit?gid=1010668241#gid=1010668241"
 
 try:
     df = cargar_datos(URL_SHEET)
 
-    # --- EL RELOJITO (Porcentaje de Cumplimiento) ---
-    # Buscamos de forma segura el valor general (asumido en la parte superior o celda inicial)
-    # Si en tu hoja el porcentaje general está en otra celda, la ajustamos, 
-    # pero por seguridad leemos un valor predeterminado o el que pasaste (ej. 17.7%)
-    try:
-        porcentaje_raw = df.iloc[0, 1] if pd.notna(df.iloc[0, 1]) else 17.7
-        valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
-        porcentaje = float(valor_limpio)
-        if porcentaje <= 1: 
-            porcentaje = porcentaje * 100
-    except:
-        porcentaje = 17.7  # Valor seguro basado en tus datos
+    # --- EL RELOJITO ---
+    porcentaje_raw = df.iloc[1, 3]
+    valor_limpio = str(porcentaje_raw).replace(',', '.').replace('%', '').strip()
+    porcentaje = float(valor_limpio)
+    if porcentaje <= 1: porcentaje = porcentaje * 100
 
     # --- CABECERA ---
     if os.path.exists(ruta_logo):
-        st.image(ruta_logo, width=150)
-        st.markdown(f"### **GIGATEL (Telecomunicaciones RHJ, C.A.)**")
+        st.image(ruta_logo, width=90)
+        st.markdown(f"### **GIGATEL (RHJ), C.A.**")
     else:
-        st.markdown(f"# **GIGATEL (Telecomunicaciones RHJ, C.A.)**")
+        st.markdown(f"# ***GIGATEL (RHJ), C.A.**")
     
     st.caption("📍 Auditoría de Cumplimiento Regulatorio - LDK")
     st.divider() 
 
-    # --- GRÁFICO (GAUGE) ---
+    # --- GRÁFICO ---
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = porcentaje,
@@ -61,58 +55,52 @@ try:
     ))
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- BÚSQUEDA INTELIGENTE DE SECCIONES (EVITA ERRORES DE FILAS) ---
-    # Convertimos todo el texto a string para buscar las Keyphrases sin importar la fila exacta
-    df_str = df.astype(str)
+    # --- PARCHE ANTICRASH Y LECTURA DE ASTERISCOS ---
+    total_filas = len(df)
     
-    # Encontrar índice de Prioridades
-    idx_prio = df_str[df_str.apply(lambda row: row.astype(str).str.contains("PRIORIDADES DEL MES DE AGOSTO", case=False).any(), axis=1)].index
-    
-    # Encontrar índice de Obligaciones
-    idx_obli = df_str[df_str.apply(lambda row: row.astype(str).str.contains("OBLIGACIONES PERIÓDICAS", case=False).any(), axis=1)].index
-
-    # --- LECTURA DE PRIORIDADES ---
-    if len(idx_prio) > 0:
-        fila_p = idx_prio[0]
-        titulo_p = df.iloc[fila_p, 2] if df.shape[1] > 2 else "PRIORIDADES DEL MES DE AGOSTO"
+    # 🎯 PRIORIDADES DEL MES
+    if total_filas > 85:
+        titulo_p = df.iloc[85, 2]
         st.markdown(f"## 🎯 **{titulo_p}**")
-        
-        # Leemos las filas siguientes que tengan datos de prioridades (máximo 9 según tu estructura)
-        for i in range(1, 10):
-            sig_fila = fila_p + i
-            if sig_fila < len(df):
-                tarea = df.iloc[sig_fila, 2] if df.shape[1] > 2 else None
-                marca = df.iloc[sig_fila, 1] if df.shape[1] > 1 else None # Ajustado a columna de estado/número
-                if pd.notna(tarea) and str(tarea).strip() != "" and "OBLIGACIONES" not in str(tarea):
+        for i in range(17):
+            if (86 + i) < total_filas:
+                tarea = df.iloc[86 + i, 2]
+                marca = df.iloc[86 + i, 0] # LECTURA DE LA COLUMNA A
+                
+                if pd.notna(tarea) and str(tarea).strip() != "":
+                    # Si detecta el asterisco en la Columna A
                     if pd.notna(marca) and '*' in str(marca):
-                        st.success(f"✅ ~~{i}. {tarea}~~ *(Validado por LDK)*")
+                        st.success(f"✅ ~~{i+1}. {tarea}~~ *(Validado por LDK)*")
                     else:
-                        if st.checkbox(f"{i}. {tarea}", key=f"prio_{sig_fila}"):
+                        # Si no hay asterisco, muestra el checkbox normal
+                        if st.checkbox(f"{i+1}. {tarea}", key=f"prio_{i}"):
                             st.info(f"✅ Recibido. Al validar esta evidencia, su cumplimiento subirá.")
 
-    # --- LECTURA DE OBLIGACIONES ---
-    if len(idx_obli) > 0:
+    # 📋 OBLIGACIONES PERIÓDICAS
+    if total_filas > 91:
         st.divider()
-        fila_o = idx_obli[0]
-        titulo_o = df.iloc[fila_o, 2] if df.shape[1] > 2 else "OBLIGACIONES PERIÓDICAS"
+        titulo_o = df.iloc[108, 2]
         st.markdown(f"## 📋 **{titulo_o}**")
-        
-        for j in range(1, 6):
-            sig_fila_o = fila_o + j
-            if sig_fila_o < len(df):
-                reporte = df.iloc[sig_fila_o, 2] if df.shape[1] > 2 else None
-                marca_rep = df.iloc[sig_fila_o, 1] if df.shape[1] > 1 else None
+        for j in range(4):
+            if (96 + j) < total_filas:
+                reporte = df.iloc[109 + j, 2]
+                marca_rep = df.iloc[109 + j, 0] # LECTURA DE LA COLUMNA A
+                
                 if pd.notna(reporte) and str(reporte).strip() != "":
+                    # Si detecta el asterisco en la Columna A
                     if pd.notna(marca_rep) and '*' in str(marca_rep):
                         st.success(f"✅ ~~{reporte}~~ *(Validado por LDK)*")
                     else:
-                        if st.checkbox(reporte, key=f"rep_{sig_fila_o}"):
+                        # Si no hay asterisco, muestra el checkbox normal
+                        if st.checkbox(reporte, key=f"rep_{j}"):
                             st.info(f"✅ Recibido para revisión LDK.")
 
 except Exception as e:
-    st.error(f"Error de sincronización con el motor LDK: {e}")
+    st.error(f"Error de sincronización: {e}")
 
 st.divider()
-if st.button("🔄 Sincronizar Sistema LDK"):
+
+# Botón que limpia la memoria y fuerza la lectura de la hoja
+if st.button("🔄 Sincronizar con Auditoría LDK"):
     st.cache_data.clear()
     st.rerun()
