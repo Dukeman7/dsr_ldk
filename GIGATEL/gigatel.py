@@ -8,10 +8,11 @@ import streamlit as st
 st.set_page_config(page_title="DSR_LDK - GIGATEL", layout="wide")
 
 
-# 2. BLINDAJE DE CACHÉ Y LECTURA CSV
+# 2. BLINDAJE DE CACHÉ Y LECTURA DE EXCEL
 @st.cache_data(ttl=600)
 def cargar_datos(url):
-  return pd.read_csv(url)
+    xl = pd.ExcelFile(url)
+    return pd.read_excel(xl, sheet_name="GIGATEL") # O el nombre exacto de tu pestaña
 
 
 ruta_logo = os.path.join(os.path.dirname(__file__), "LOGO_GIGATEL.png")
